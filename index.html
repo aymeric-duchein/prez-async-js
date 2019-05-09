@@ -1,0 +1,545 @@
+<!doctype html>
+<html lang="en" prefix="og: http://ogp.me/ns#">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Async JS</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,700,700i%7CMaitree:200,300,400,600,700&amp;subset=latin-ext" rel="stylesheet">
+
+    <link rel="stylesheet" type='text/css' media='all' href="static/css/webslides.css">
+    <link rel="stylesheet" type='text/css' media='all' href="static/css/svg-icons.css">
+    <link rel="stylesheet" type='text/css' media='all' href="static/css/custom.css">
+
+    <link rel="shortcut icon" sizes="16x16" href="static/images/favicons/favicon.png">
+    <link rel="shortcut icon" sizes="32x32" href="static/images/favicons/favicon-32.png">
+    <link rel="apple-touch-icon icon" sizes="76x76" href="static/images/favicons/favicon-76.png">
+    <link rel="apple-touch-icon icon" sizes="120x120" href="static/images/favicons/favicon-120.png">
+    <link rel="apple-touch-icon icon" sizes="152x152" href="static/images/favicons/favicon-152.png">
+    <link rel="apple-touch-icon icon" sizes="180x180" href="static/images/favicons/favicon-180.png">
+    <link rel="apple-touch-icon icon" sizes="192x192" href="static/images/favicons/favicon-192.png">
+
+    <link href="static/css/prism.css" rel="stylesheet" />
+    <script src="static/js/prism.js"></script>
+
+</head>
+<body>
+<main role="main">
+    <article id="webslides" class="vertical">
+        <!-- Title -->
+        <section>
+
+            <div class="wrap aligncenter">
+                <img class="alignright size-20" src="static/images/logo-js.png">
+                <p class="text-subtitle">Event loop 101</p>
+                <h1><strong>L'asynchrone en JS</strong></h1>
+                <p class="text-intro">Callback vs Promise vs requestAnimationFrame</p>
+            </div>
+        </section>
+
+        <!-- Sommaire -->
+        <section>
+            <div class="wrap aligncenter">
+                <div class="content-left number">
+                    <h2><strong>Sommaire</strong></h2>
+                    <p class="text-intro">Pour savoir le contenu de la presentation.</p>
+                </div>
+                <div class="content-right">
+                    <div class="bg-white shadow">
+                        <ul class="flexblock reasons">
+                            <li>
+                                <h2>Event loop</h2>
+                                <p>Kesaco?</p>
+                            </li>
+                            <li>
+                                <h2>Callbacks</h2>
+                                <p>JS vanilla hell</p>
+                            </li>
+                            <li>
+                                <h2>Promise</h2>
+                                <p>On enchaine avec les microtasks</p>
+                            </li>
+                            <li>
+                                <h2>requestAnimationFrame</h2>
+                                <p>Pour tout vos besoins d'animation</p>
+                            </li>
+                            <li>
+                                <h2>Event loop loops</h2>
+                                <p>What?</p>
+                            </li>
+                            <li>
+                                <h2>Observables, async/await et autre web worker</h2>
+                                <p>Des "exemples" utiles!</p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- .end .bg-white shadow -->
+            </div>
+        </section>
+
+        <!-- Event loop Base -->
+        <section class="event-loop-v1">
+            <div class="wrap">
+                <div class="content-left">
+                    <p class="text-subtitle">La base</p>
+                    <h3><strong>Event loop</strong></h3>
+                    <p>Javascript est: </p>
+                    <ul>
+                        <li>Interpreté</li>
+                        <li>Mono-exétron</li>
+                    </ul>
+                </div>
+                <div class="content-right">
+                    <ul style="max-width: 300px" class="flexblock plans blink">
+                        <li style="margin-bottom: 1rem !important;">
+                            <h2>JS Engine</h2>
+                            <div style="padding-bottom: 0 !important;">
+                                <h3>Memory</h3>
+                                <h3>Call-stack</h3>
+                                <ul class="instruction-ul">
+                                    <li class="instruction-li">
+                                        <div class="instruction">Instructions</div>
+                                    </li>
+                                    <li class="instruction-li">
+                                        <div class="instruction">Instructions</div>
+                                    </li>
+                                    <li class="instruction-li">
+                                        <div class="instruction">Instructions</div>
+                                    </li>
+                                </ul>
+
+                            </div>
+                        </li>
+                    </ul>
+                    <div class="event-loop">
+                        <svg class="fa-refresh large" style="fill: #2f4663;"><use xlink:href="#fa-refresh"></use></svg>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SetTimeout Base -->
+        <section>
+            <div class="wrap">
+                <div class="grid">
+                    <div class="column">
+                        <p class="text-subtitle">La base</p>
+                        <h3><strong>Les callbacks</strong></h3>
+                        <p class="text-intro">setTimeout, setInterval</p>
+                    </div>
+                    <div class="column">
+                    <pre style="min-width: 500px;left: -100px;position: relative;"><code class="language-js">
+let str = '// Bonjour, ';
+setTimeout(() => str += 'je m\'appelle ');
+str += 'Yoda ';
+                    </code></pre>
+                    </div>
+                    <div class="column">
+                        <p style="text-align: center; margin-bottom: 0rem !important;">
+                            <a class="button" onclick="testSetTimeout()">Test</a>
+                            <a class="button" onclick="resetSetTimeout()">Reset</a>
+                        </p>
+                        <pre><code class="language-js" id="setTimeoutEx"></code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SetTimeout event loop -->
+        <section class="event-loop-v2">
+            <div class="wrap">
+                <div class="content-left">
+                    <p class="text-subtitle">v2.0</p>
+                    <h3><strong>Event loop</strong></h3>
+                    <p>On ajoute: </p>
+                    <ul>
+                        <li>Une file d'attente</li>
+                        <li>Des Apis Web</li>
+                    </ul>
+                </div>
+                <div class="content-right">
+                    <ul class="flexblock plans blink">
+                        <li style="margin-bottom: 1rem !important;">
+                            <h2>JS Engine</h2>
+                            <div style="padding-bottom: 0 !important;">
+                                <h3>Memory</h3>
+                                <h3>Call-stack</h3>
+                                <ul class="instruction-ul">
+                                    <li class="instruction-li">
+                                        <div class="instruction">SetTimeout(cb, timer)</div>
+                                    </li>
+                                    <li class="instruction-li">
+                                        <div class="instruction">Instructions</div>
+                                    </li>
+                                    <li class="instruction-li">
+                                        <div class="instruction">Instructions</div>
+                                    </li>
+                                    <li class="instruction-li callback-instruction">
+                                        <div class="instruction">Callback</div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li style="margin-bottom: 1rem !important;">
+                            <h2>Web APIS</h2>
+                            <div style="padding-bottom: 0 !important;">
+                                <h3>Web Worker</h3>
+                                <h3>XHR</h3>
+                                <h3>DOM</h3>
+                                <ul class="wa-ul">
+                                    <li class="wa-li">
+                                        <div class="instruction">Callback</div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                    </ul>
+                    <div class="event-loop">
+                        <svg class="fa-refresh large" style="fill: #2f4663;"><use xlink:href="#fa-refresh"></use></svg>
+                    </div>
+                    <p class="task-title">Tâches</p>
+                    <div class="task-queue">
+                        <div class="task-cb">CB</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Promise Base -->
+        <section>
+            <div class="wrap">
+                <div class="grid">
+                    <div class="column">
+                        <p class="text-subtitle">La base</p>
+                        <h3><strong>Les Promise</strong></h3>
+                        <p class="text-intro">On a perdu IE...</p>
+                    </div>
+                    <div class="column">
+                    <pre style="min-width: 500px;left: -100px;position: relative;"><code class="language-js">
+let str = 'Seize ';
+new Promise(r => r('sèches '))
+    .then(v => str += v);
+str += 'chaises ';
+                    </code></pre>
+                    </div>
+                    <div class="column">
+                        <p style="text-align: center; margin-bottom: 0rem !important;">
+                            <a class="button" onclick="testPromise()">Test</a>
+                            <a class="button" onclick="resetPromise()">Reset</a>
+                        </p>
+                        <pre><code class="language-js" id="promiseEx"></code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Promise vs setTimeout -->
+        <section>
+            <div class="wrap">
+                <div class="grid">
+                    <div class="column">
+                        <p class="text-subtitle">La base</p>
+                        <h3><strong>Les Promise</strong></h3>
+                        <p class="text-intro">Plus rapide que le setTimeout ?</p>
+
+                        <p>Oui, mais pas vraiment...</p>
+                    </div>
+                    <div class="column">
+                    <pre style="min-width: 500px;left: -100px;position: relative;"><code class="language-js">
+let str;
+setTimeout(() => str = !str ?
+     'l\'homme qui prend ':
+     str + 'l\'homme');
+new Promise(r => r('la mer '))
+    .then(v => str = !str ?
+     v + 'qui prend ':
+     str + v);
+                    </code></pre>
+                    </div>
+                    <div class="column">
+                        <p style="text-align: center; margin-bottom: 0rem !important;">
+                            <a class="button" onclick="testPromise2()">Test</a>
+                            <a class="button" onclick="resetPromise2()">Reset</a>
+                        </p>
+                        <pre><code class="language-js" id="promise2Ex"></code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Promise Event loop v3 -->
+        <section class="event-loop-v3">
+            <div class="wrap">
+                <div class="content-left">
+                    <p class="text-subtitle">v3.0</p>
+                    <h3><strong>Event loop</strong></h3>
+                    <p>On ajoute: </p>
+                    <ul>
+                        <li>Une autre file d'attente</li>
+                    </ul>
+                </div>
+                <div class="content-right">
+                    <ul class="flexblock plans blink">
+                        <li style="margin-bottom: 1rem !important;">
+                            <h2>JS Engine</h2>
+                            <div style="padding-bottom: 0 !important;">
+                                <h3>Memory</h3>
+                                <h3>Call-stack</h3>
+                                <ul class="instruction-ul">
+                                    <li class="instruction-li">
+                                        <div class="instruction">Promise(r => ...)</div>
+                                    </li>
+                                    <li class="instruction-li">
+                                        <div class="instruction">SetTimeout(cb, timer)</div>
+                                    </li>
+                                    <li class="instruction-li">
+                                        <div class="instruction">Instructions</div>
+                                    </li>
+                                    <li class="instruction-li callback-instruction">
+                                        <div class="instruction">Callback</div>
+                                    </li>
+                                    <li class="instruction-li promise-instruction">
+                                        <div class="instruction">Promise.then()</div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li style="margin-bottom: 1rem !important;">
+                            <h2>Web APIS</h2>
+                            <div style="padding-bottom: 0 !important;">
+                                <h3>Web Worker</h3>
+                                <h3>XHR</h3>
+                                <h3>DOM</h3>
+                                <ul class="wa-ul">
+                                    <li class="wa-li wa-cb">
+                                        <div class="instruction ">Callback</div>
+                                    </li>
+                                    <li class="wa-li wa-pro">
+                                        <div class="instruction">Promise</div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                    </ul>
+                    <div class="event-loop">
+                        <svg class="fa-refresh large" style="fill: #2f4663;"><use xlink:href="#fa-refresh"></use></svg>
+                    </div>
+
+                    <p class="task-title">Tâches</p>
+                    <div class="task-queue">
+                        <div class="task-cb cb-anim">CB</div>
+                    </div>
+                    <p class="task-title">Micro-Tâches</p>
+                    <div class="task-queue">
+                        <div class="task-cb pro-anim">Pro</div>
+                    </div>
+              </div>
+
+
+            </div>
+        </section>
+
+        <!-- RequestAnimationFrame Base -->
+        <section>
+            <div class="wrap">
+                <div class="grid">
+                    <div class="column">
+                        <p class="text-subtitle">La base</p>
+                        <h3><strong>RequestAnimationFrame</strong></h3>
+                        <p class="text-intro">On fait des choses "jolies"</p>
+                    </div>
+                    <div class="column">
+                    <pre style="min-width: 500px;left: -100px;position: relative;"><code class="language-js">
+var display =0;
+function displayBlink() {
+  display++;
+  document.getElementById('blinker')
+    .style.display = display<30?'inline':'none';
+  display = display > 60 ? 0: display;
+  requestAnimationFrame(() => displayBlink());
+}
+
+                    </code></pre>
+                    </div>
+                    <div class="column">
+                        <pre id="blinker"><code class="language-js">On me voit, on me voit plus
+                        </code>
+                            <p style="position: relative;float: right;bottom: 50px;">"<img onclick="displayBlink()" style="bottom: -24px;width: 48px;height: 48px;position: relative;" src="static/images/carteapuce.png"/>"</p>
+</pre>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- RequestAnimationFrame Order -->
+        <section>
+            <div class="wrap">
+                <div class="grid">
+                    <div class="column">
+                        <p class="text-subtitle">L'ordre</p>
+                        <h3><strong>RequestAnimationFrame</strong></h3>
+                        <p class="text-intro">Adieu prédictibilté</p>
+                    </div>
+                    <div class="column">
+                    <pre style="min-width: 500px;left: -100px;position: relative;"><code class="language-js">
+let str = '';
+setTimeout(() => str += 'General ');
+requestAnimationFrame(() => str += 'Kenobi ');
+new Promise(r => r('there! '))
+.then(v => str += v);
+str += 'Hello ';
+
+                    </code></pre>
+                    </div>
+                    <div class="column">
+                        <p style="text-align: center; margin-bottom: 0rem !important;">
+                            <a class="button" onclick="testRaf()">Test</a>
+                            <a class="button" onclick="resetRaf()">Reset</a>
+                        </p>
+                        <pre><code class="language-js" id="rafEx"></code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- RAF Event loop v4 -->
+        <section class="event-loop-v4">
+            <div class="wrap">
+                <div class="content-left">
+                    <p class="text-subtitle">v4.0</p>
+                    <h3><strong>Event loop</strong></h3>
+                    <p>On ajoute: </p>
+                    <ul>
+                        <li>Une autre file d'attente</li>
+                        <li>Un interval de rendu</li>
+                    </ul>
+
+
+                </div>
+                <div class="content-right">
+                    <!--<ul class="flexblock plans blink">
+                        <li style="margin-bottom: 1rem !important;">
+                            <h2>JS Engine</h2>
+                            <div style="padding-bottom: 0 !important;">
+                                <h3>Memory</h3>
+                                <h3>Call-stack</h3>
+                            </div>
+                        </li>
+                        <li style="margin-bottom: 1rem !important;">
+                            <h2>Web APIS</h2>
+                            <div style="padding-bottom: 0 !important;">
+                                <h3>Web Worker</h3>
+                                <h3>XHR</h3>
+                                <h3>DOM</h3>
+                            </div>
+                        </li>
+                    </ul>
+                    </ul>
+                    <div class="event-loop">
+                        <svg class="fa-refresh large" style="fill: #2f4663;"><use xlink:href="#fa-refresh"></use></svg>
+                    </div>
+
+                    <p class="task-title">Tâches</p>
+                    <div class="task-queue">
+                    </div>
+                    <p class="task-title">Micro-Tâches</p>
+                    <div class="task-queue">
+                    </div>
+                    <p class="task-title">Render</p>-->
+                    <div class="task-queue">
+                    <a href="http://latentflip.com/loupe/?code=JC5vbignYnV0dG9uJywgJ2NsaWNrJywgZnVuY3Rpb24gb25DbGljaygpIHsKICAgIAogICAgc2V0VGltZW91dChmdW5jdGlvbiB0KCkgeyBjb25zb2xlLmxvZygnR2VuZXJhbCAnKX0sIDApOwogICAgcmVxdWVzdEFuaW1hdGlvbkZyYW1lKGZ1bmN0aW9uIHJhZigpIHsKICAgICAgICBjb25zb2xlLmxvZygnS2Vub2JpICcpCiAgICB9KTsKICAgIG5ldyBQcm9taXNlKGZ1bmN0aW9uKHIscCkgewogICAgICAgIHIoJ3RoZXJlISAnKTsKICAgIH0pLnRoZW4oZnVuY3Rpb24gcCh2KSB7CiAgICAgICAgY29uc29sZS5sb2codik7CiAgICB9KTsKICAgIGNvbnNvbGUubG9nKCdIZWxsbyAnKTsKfSk7Cg%3D%3D!!!PGJ1dHRvbj5DbGljayBtZSE8L2J1dHRvbj4%3D" target="_blank">Demo?</a>
+                    </div>
+                </div>
+
+
+            </div>
+        </section>
+
+        <!-- Event Loop loops -->
+        <section>
+            <div class="wrap">
+                <div class="grid">
+                    <div class="column">
+                        <p class="text-subtitle">Event loop loops</p>
+                        <h3><strong>Les boucles infinies</strong></h3>
+                        <p class="text-intro">Star Command, est-ce que vous me recevez ?</p>
+                    </div>
+                    <div class="column">
+                        <p class="task-title">Tâches</p>
+                        <a target="_blank" href="taches.html" class="task-queue" style="line-height: 32px;">
+                            On dépile 1.
+                        </a>
+                        <p class="task-title">Micro-Tâches</p>
+                        <a target="_blank" href="promise.html" class="task-queue" style="line-height: 32px;">
+                            On dépile jusqu'à ce que la queue soit vide.
+
+                        </a>
+                        <p class="task-title">Render</p>
+                        <a target="_blank" href="render.html" class="task-queue" style="line-height: 32px;">
+                            On dépile toute les tâches créer jusqu'a maintenant.
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Observable && Async await -->
+        <section>
+            <div class="wrap">
+                <div class="grid">
+                    <div class="column">
+                        <p class="text-subtitle"></p>
+                        <h3><strong>Les Observables</strong></h3>
+                        <p class="text-intro">Scheduler power</p>
+                    </div>
+                    <div class="column">
+                        <p class="text-subtitle"></p>
+                        <h3><strong>Async await</strong></h3>
+                        <p class="text-intro">Du sucre aide l'async à couler</p>
+                    </div>
+                    <div class="column">
+                        <p class="text-subtitle"></p>
+                        <h3><strong>Web worker</strong></h3>
+                        <p class="text-intro">You've got mail</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quiz -->
+        <section>
+            <div class="wrap">
+                <div class="grid">
+                    <div class="column">
+                    </div>
+                    <div class="column">
+                        <h3><strong><a href="https://www.mentimeter.com/s/cecd4a05ad8323f3b95aa16c0d2b3d64/c6ae6644c692" target="_blank">Quiz surprise</a></strong></h3>
+                        <p class="text-intro">Menti 60 50 57</p>
+                    </div>
+                    <div class="column">
+                    </div>
+                </div>
+            </div>
+        </section>
+    </article>
+    <!-- end article -->
+</main>
+
+
+<!-- Required -->
+<script src="static/js/webslides.js"></script>
+<script>
+  window.ws = new WebSlides();
+</script>
+
+<!-- OPTIONAL - svg-icons.js (fontastic.me - Font Awesome as svg icons) -->
+<script defer src="static/js/svg-icons.js"></script>
+<script src="index.js"></script>
+
+</body>
+</html>

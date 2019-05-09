@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="static/css/prism.css" rel="stylesheet" />
+    <script src="static/js/prism.js"></script>
+    <script>
+        function loop() {
+            let i = 0;
+            while(i++ < 123456789) {}
+            requestAnimationFrame(() => loop());
+        }
+    </script>
+</head>
+<body>
+<img src="static/images/8dI0T36.gif">
+<button onclick="loop()">LOOP!</button>
+
+<p><pre><code class="language-js">
+function loop() {
+    let i = 0;
+    while(i++ < 123456789) {}
+    requestAnimationFrame(() => loop());
+}</code></pre>
+</body>
+</html>
